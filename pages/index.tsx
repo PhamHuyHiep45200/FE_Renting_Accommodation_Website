@@ -1,3 +1,7 @@
+import DataHouse from "@/components/home/DataHouse";
+import Search from "@/components/home/Search";
+import Slide from "@/components/home/Slide";
+import { ICommon } from "@/model/common.model";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
   getCategoryAll,
@@ -6,7 +10,8 @@ import {
 } from "@/redux/service/user.service";
 import { UserState, decrement, increment } from "@/redux/slide/user.slide";
 import { wrapper } from "@/redux/store";
-import { Button } from "@mui/material";
+import { Button, Container } from "@mui/material";
+import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 
 function Index() {
@@ -14,19 +19,24 @@ function Index() {
     (state: { userSlice: UserState }) => state.userSlice
   );
   const dispatch = useAppDispatch();
-  const { data, error } = useGetCategoryAllQuery({});
-  useEffect(() => {
-    console.log(data, error);
-  }, [data]);
+  const router = useRouter();
+
+  // const { data, error, isLoading, isFetching, refetch } =
+  //   useGetCategoryAllQuery({});
+
+  // useEffect(() => {
+  //   console.log(data, error, isLoading, isFetching);
+  // }, [data, isFetching])
+
   return (
-    <div className="flex items-center">
-      <Button variant='contained' onClick={() => dispatch(increment())}>
-        add
-      </Button>
-      <div className="mx-5">{value}</div>
-      <Button variant='contained' onClick={() => dispatch(decrement())}>
-        minus
-      </Button>
+    <div className="">
+      <Slide />
+      <Container>
+        <Search />
+        <div className="mt-[80px]">
+        <DataHouse /> 
+        </div>
+      </Container>
     </div>
   );
 }
@@ -34,7 +44,7 @@ function Index() {
 export default Index;
 
 export const getServerSideProps = wrapper.getServerSideProps(
-  (store) => async (context) => {
+  (store) => async () => {
     store.dispatch(getCategoryAll.initiate);
 
     await Promise.all(store.dispatch(getRunningQueriesThunk()));
