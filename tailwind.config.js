@@ -10,6 +10,10 @@ module.exports = {
   },
   theme: {
     extend: {
+      colors: {
+        'primary': 'rgb(25, 118, 210)',
+        'mask-loading': 'rgba(0,0,0,0.2)'
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':

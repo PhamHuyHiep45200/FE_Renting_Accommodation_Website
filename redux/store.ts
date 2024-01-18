@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit'
 import userReducer from './slide/user.slide'
+import commonReducer from './slide/common.slide'
 import { categoryQuery } from './service/user.service'
 import { createWrapper } from 'next-redux-wrapper'
 
 export const makeStore = () => {
   return configureStore({
     reducer: {
+      commonSlice: commonReducer,
       userSlice: userReducer,
       [categoryQuery.reducerPath]: categoryQuery.reducer
     },
