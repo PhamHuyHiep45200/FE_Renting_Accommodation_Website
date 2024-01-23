@@ -1,3 +1,5 @@
+import { useAppDispatch } from "@/store/hooks";
+import { openChat } from "@/store/slide/common.slide";
 import {
   Avatar,
   Badge,
@@ -12,6 +14,12 @@ import Image from "next/image";
 import React from "react";
 
 function Chat() {
+  const dispatch = useAppDispatch();
+
+  const openModalChat = () => {
+    dispatch(openChat());
+  };
+
   return (
     <PopupState variant="popover" popupId="demo-popup-popover">
       {(popupState) => (
@@ -36,8 +44,13 @@ function Chat() {
             }}
           >
             <List sx={{ width: 260, bgcolor: "background.paper", padding: 0 }}>
-                <div className="text-center font-semibold pt-5 pb-2 text-[20px]">Chat Của Bạn</div>
-              <ListItem className="cursor-pointer hover:bg-primary hover:bg-opacity-[0.3]">
+              <div className="text-center font-semibold pt-5 pb-2 text-[20px]">
+                Chat Của Bạn
+              </div>
+              <ListItem
+                className="cursor-pointer hover:bg-primary hover:bg-opacity-[0.3]"
+                onClick={openModalChat}
+              >
                 <ListItemAvatar>
                   <Avatar>H</Avatar>
                 </ListItemAvatar>

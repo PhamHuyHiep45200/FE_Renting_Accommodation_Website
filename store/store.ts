@@ -1,7 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit'
 import userReducer from './slide/user.slide'
 import commonReducer from './slide/common.slide'
-import { categoryQuery } from './service/user.service'
+import authReduceer from './slide/auth.slide'
+import { userQuery } from './service/user.service'
 import { createWrapper } from 'next-redux-wrapper'
 
 export const makeStore = () => {
@@ -9,10 +10,10 @@ export const makeStore = () => {
     reducer: {
       commonSlice: commonReducer,
       userSlice: userReducer,
-      [categoryQuery.reducerPath]: categoryQuery.reducer
+      authSlice: authReduceer,
+      [userQuery.reducerPath]: userQuery.reducer,
     },
-    middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat(categoryQuery.middleware),
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(userQuery.middleware)
   })
 }
 
