@@ -1,63 +1,34 @@
 import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
-import { Card, CardHeader, Skeleton } from "@mui/material";
+import CardHome from "../base/CardHome";
+import { useRouter } from "next/router";
 
 export default function Slide() {
+  const router = useRouter()
+
+  const redirectDetail = () => {
+    router.push('/detail_post/1')
+  }
   return (
-    <>
+    <div className="px-5 py-10">
       <Swiper
         slidesPerView={4}
-        spaceBetween={30}
+        spaceBetween={40}
         autoplay
         loop
         speed={600}
         modules={[Autoplay, Pagination]}
         className="mySwiper"
       >
-        {[1, 2, 3, 4].map((e) => {
+        {[1, 2, 3, 4, 5, 6, 7].map((e) => {
           return (
-            <SwiperSlide key={e} className="cursor-pointer">
-              <Card sx={{ maxWidth: 345, m: 2, marginBottom: 4 }}>
-                <CardHeader
-                  avatar={
-                    <Skeleton
-                      animation="wave"
-                      variant="circular"
-                      width={40}
-                      height={40}
-                    />
-                  }
-                  title={
-                    <Skeleton
-                      animation="wave"
-                      height={10}
-                      width="80%"
-                      style={{ marginBottom: 6 }}
-                    />
-                  }
-                  subheader={
-                    <Skeleton animation="wave" height={10} width="40%" />
-                  }
-                />
-                <Skeleton
-                  sx={{ height: 190 }}
-                  animation="wave"
-                  variant="rectangular"
-                />
-                <div className="p-5">
-                  <Skeleton
-                    animation="wave"
-                    height={10}
-                    style={{ marginBottom: 6 }}
-                  />
-                  <Skeleton animation="wave" height={10} width="80%" />
-                </div>
-              </Card>
+            <SwiperSlide key={e} className="cursor-pointer" onClick={redirectDetail}>
+              <CardHome />
             </SwiperSlide>
           );
         })}
       </Swiper>
-    </>
+    </div>
   );
 }

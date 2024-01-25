@@ -7,6 +7,7 @@
     "no-mixed-operators": "error",
     "no-tabs": ["error", {"allowIndentationTabs": true}],
     "no-console": "error",
-    "max-lines": ["error", 250]
+    "max-lines": ["error", 250],
+    "no-unused-vars": ["error"]
   }
 }
