@@ -1,25 +1,37 @@
-import { IAuthSlide, IUSer } from '@/model/auth.model'
-import { PayloadAction, createSlice } from '@reduxjs/toolkit'
+import { IAuthSlide, IInfoAccount, IUSer } from "@/model/auth.model";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 const initialState: IAuthSlide = {
-    auth: false,
-    user: null
-}
+  auth: false,
+  user: null,
+  infoAccout: null,
+  favorite: 0,
+};
 
 export const authSlice = createSlice({
-  name: 'common',
+  name: "common",
   initialState,
   reducers: {
     setAuth: (state: IAuthSlide, action: PayloadAction<boolean>) => {
-        state.auth = action.payload
+      state.auth = action.payload;
     },
     setUser: (state: IAuthSlide, acction: PayloadAction<IUSer>) => {
-        state.user = acction.payload
-    }
+      state.user = acction.payload;
+    },
+    setInfo: (state: IAuthSlide, action: PayloadAction<IInfoAccount>) => {
+      state.infoAccout = action.payload;
+    },
+    setFavorite: (state: IAuthSlide, action: PayloadAction<number>) => {
+      state.favorite = action.payload;
+    },
+    setCheckChangeUser: (state: IAuthSlide, action: PayloadAction<number>) => {
+      state.checkChangeUser = action.payload;
+    },
   },
-})
+});
 
 // Action creators are generated for each case reducer function
-export const { setAuth, setUser } = authSlice.actions
+export const { setAuth, setUser, setInfo, setFavorite, setCheckChangeUser } =
+  authSlice.actions;
 
 export default authSlice.reducer;

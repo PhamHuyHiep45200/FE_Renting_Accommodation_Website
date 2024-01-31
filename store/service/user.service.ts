@@ -1,5 +1,5 @@
 import { Action, PayloadAction } from "@reduxjs/toolkit";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import { HYDRATE } from "next-redux-wrapper";
 import { axiosBaseQuery } from "./axiosBase.service";
 
@@ -21,11 +21,45 @@ export const userQuery = createApi({
   tagTypes: [],
   endpoints(build) {
     return {
+      userFavorite: build.query({
+        query: (params) => ({
+          url: `/favourite/user`,
+          method: "get",
+          params,
+        }),
+      }),
       getMe: build.query({
         query: () => ({ url: "/users/me", method: "get" }),
       }),
       getCategory: build.query({
         query: () => ({ url: "/category", method: "get" }),
+      }),
+      search: build.query({
+        query: (params) => {
+          return { url: "/common/search", method: "get", params };
+        },
+      }),
+      newHouse: build.query({
+        query: (params) => ({ url: "/house", method: "get", params }),
+      }),
+      houseUser: build.query({
+        query: (params) => ({ url: "/house/user", method: "get", params }),
+      }),
+      favorite: build.query({
+        query: () => ({ url: "/common/top-favourite", method: "get" }),
+      }),
+      randomUser: build.query({
+        query: () => ({ url: "/common/random-user", method: "get" }),
+      }),
+      randomHouse: build.query({
+        query: (params) => ({
+          url: "/common/random-house",
+          method: "get",
+          params,
+        }),
+      }),
+      detailHouse: build.query({
+        query: (id) => ({ url: `/house/${id}`, method: "get" }),
       }),
       uploadImage: build.mutation({
         query: (data) => ({
@@ -35,17 +69,45 @@ export const userQuery = createApi({
           headers: { "Content-Type": "multipart/form-data" },
         }),
       }),
+      registerUser: build.mutation({
+        query: (data) => ({
+          url: `/auth/register`,
+          method: "post",
+          data,
+        }),
+      }),
       loginUser: build.mutation({
         query: (data) => ({
           url: `/auth/login`,
-          method: "POST",
+          method: "post",
           data,
         }),
       }),
       postHouse: build.mutation({
         query: (data) => ({
           url: `/house`,
-          method: "POST",
+          method: "post",
+          data,
+        }),
+      }),
+      updateHouse: build.mutation({
+        query: ({ id, data }) => ({
+          url: `/house/${id}`,
+          method: "patch",
+          data,
+        }),
+      }),
+      updateMe: build.mutation({
+        query: (data) => ({
+          url: `/users/me`,
+          method: "put",
+          data,
+        }),
+      }),
+      addFavorite: build.mutation({
+        query: (data) => ({
+          url: `/favourite`,
+          method: "post",
           data,
         }),
       }),
@@ -56,12 +118,41 @@ export const userQuery = createApi({
 // Export hooks for usage in functional components
 export const {
   useGetMeQuery,
+  useUserFavoriteQuery,
   useGetCategoryQuery,
+  useFavoriteQuery,
+  useRandomUserQuery,
+  useRandomHouseQuery,
+  useDetailHouseQuery,
+  useHouseUserQuery,
+  useNewHouseQuery,
+  useSearchQuery,
   useLoginUserMutation,
   usePostHouseMutation,
   useUploadImageMutation,
+  useUpdateHouseMutation,
+  useUpdateMeMutation,
+  useRegisterUserMutation,
+  useAddFavoriteMutation,
   util: { getRunningQueriesThunk },
 } = userQuery;
 
-export const { getMe, getCategory, loginUser, postHouse, uploadImage } =
-  userQuery.endpoints;
+export const {
+  getMe,
+  getCategory,
+  loginUser,
+  postHouse,
+  uploadImage,
+  favorite,
+  randomUser,
+  randomHouse,
+  detailHouse,
+  houseUser,
+  updateHouse,
+  updateMe,
+  newHouse,
+  search,
+  registerUser,
+  addFavorite,
+  userFavorite,
+} = userQuery.endpoints;

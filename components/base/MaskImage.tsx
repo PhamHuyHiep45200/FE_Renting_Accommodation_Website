@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { IMaskImage } from "@/model/base.model";
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 function MaskImage(props: IMaskImage) {
   const { src, alt, height, width } = props;
@@ -23,7 +23,7 @@ function MaskImage(props: IMaskImage) {
     }
   };
 
-  useLayoutEffect(()=>{
+  useEffect(()=>{
     getSizeImage()
   }, [])
 

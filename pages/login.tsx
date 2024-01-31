@@ -3,10 +3,12 @@ import { FORMAT_DEFAULT_DATE } from "@/config/date.config";
 import { useAppDispatch } from "@/store/hooks";
 import { useLoginUserMutation } from "@/store/service/user.service";
 import { setAuth } from "@/store/slide/auth.slide";
+import { startLoading, stopLoading } from "@/store/slide/common.slide";
 import { validationSchema } from "@/validation/login.validation";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
   Button,
+  Divider,
   FormControl,
   IconButton,
   InputAdornment,
@@ -14,7 +16,9 @@ import {
 } from "@mui/material";
 import { Field, Formik } from "formik";
 import moment from "moment";
+import Link from "next/link";
 import { useRouter } from "next/router";
+import { useSnackbar } from "notistack";
 import React, { useEffect } from "react";
 
 const initialValues = {
@@ -23,10 +27,11 @@ const initialValues = {
 };
 function Login() {
   const dispatch = useAppDispatch()
+  const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
   const [showPassword, setShowPassword] = React.useState(false);
 
-  const [loginUser, { data, isLoading }] = useLoginUserMutation();
+  const [loginUser, { data, isLoading, isSuccess, isError }] = useLoginUserMutation();
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -37,15 +42,28 @@ function Login() {
   };
 
   useEffect(() => {
-    if (!isLoading && data) {
+    if (isSuccess && data) {
       localStorage.setItem("token", data.data.accessToken);
       localStorage.setItem("refresh_token", data.data.refreshToken);
       localStorage.setItem(
         "expires",
-        moment().add(data.data.expiresTime, "seconds").format(FORMAT_DEFAULT_DATE)
+        moment().add(data.data.expires, "second").format(FORMAT_DEFAULT_DATE)
       );
       dispatch(setAuth(true))
       router.push('/')
+    }
+    if(isError) {
+      enqueueSnackbar("Vui lòng kiểm tra lại thông tin Tài Khoản", {
+        variant: "error",
+      });
+    }
+  }, [isSuccess, isError, data]);
+
+  useEffect(() => {
+    if (isLoading) {
+      dispatch(startLoading());
+    } else {
+      dispatch(stopLoading());
     }
   }, [isLoading]);
 
@@ -98,11 +116,15 @@ function Login() {
                   label="Password"
                 />
               </FormControl>
-              <div className="text-center mt-5">
-                <Button variant="contained" size="large" type="submit">
+              <FormControl fullWidth className="mt-5">
+                <Button variant="contained" color="info" size="large" type="submit">
                   Đăng Nhập
                 </Button>
+              </FormControl>
+              <div className="text-center my-5">
+                Bạn chưa có tài khoản? <Link className="text-[blue]" href='/register'>Tạo Tài Khoản</Link>
               </div>
+              <Divider />
             </form>
           )}
         </Formik>
