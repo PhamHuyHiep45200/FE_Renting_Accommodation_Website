@@ -1,6 +1,8 @@
 import { InfoList } from "@/config/header.config";
 import { IAuthSlide } from "@/model/auth.model";
-import { useAppSelector } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { userQuery } from "@/store/service/user.service";
+import { setUser } from "@/store/slide/auth.slide";
 import { Avatar, List, ListItem, Popover } from "@mui/material";
 import PopupState, { bindPopover, bindTrigger } from "material-ui-popup-state";
 import { useRouter } from "next/router";
@@ -10,16 +12,22 @@ function Info() {
   const { user } = useAppSelector(
     (state: { authSlice: IAuthSlide }) => state.authSlice
   );
-  const router = useRouter()
+  const router = useRouter();
+  const dispatch = useAppDispatch()
 
   const redirectPath = (path: string) => {
-    if(path === 'logout') {
-
+    if (path === "logout") {
+      localStorage.removeItem("token");
+      localStorage.removeItem("refresh_token");
+      localStorage.removeItem("expires");
+      router.push("/login");
+      dispatch(setUser(null))
+      dispatch(userQuery.util.resetApiState());
     } else {
-      router.push(path)
+      router.push(path);
     }
-  }
-  
+  };
+
   return (
     <PopupState variant="popover" popupId="popup-popover">
       {(popupState) => (
@@ -31,7 +39,7 @@ function Info() {
             <Avatar
               sx={{ height: 40, width: 40 }}
               alt={user?.username?.[0]}
-              src={user?.avatar ?? ''}
+              src={user?.avatar ?? ""}
             />
             <span>{user?.username}</span>
           </div>
@@ -52,8 +60,8 @@ function Info() {
                   key={info.path}
                   className="cursor-pointer font-semibold hover:bg-primary hover:bg-opacity-[0.3]"
                   onClick={() => {
-                    redirectPath(info.path) 
-                    popupState.close()
+                    redirectPath(info.path);
+                    popupState.close();
                   }}
                 >
                   {info.label}

@@ -48,6 +48,9 @@ export const userQuery = createApi({
       favorite: build.query({
         query: () => ({ url: "/common/top-favourite", method: "get" }),
       }),
+      favoriteById: build.query({
+        query: (params) => ({ url: `/common//check-like`, method: "get", params }),
+      }),
       randomUser: build.query({
         query: () => ({ url: "/common/random-user", method: "get" }),
       }),
@@ -111,6 +114,13 @@ export const userQuery = createApi({
           data,
         }),
       }),
+      deleteFavorite: build.mutation({
+        query: ({id, data}) => ({
+          url: `/favourite/${id}`,
+          method: "delete",
+          data
+        }),
+      }),
     };
   },
 });
@@ -126,6 +136,7 @@ export const {
   useDetailHouseQuery,
   useHouseUserQuery,
   useNewHouseQuery,
+  useFavoriteByIdQuery,
   useSearchQuery,
   useLoginUserMutation,
   usePostHouseMutation,
@@ -134,6 +145,7 @@ export const {
   useUpdateMeMutation,
   useRegisterUserMutation,
   useAddFavoriteMutation,
+  useDeleteFavoriteMutation,
   util: { getRunningQueriesThunk },
 } = userQuery;
 
@@ -155,4 +167,6 @@ export const {
   registerUser,
   addFavorite,
   userFavorite,
+  favoriteById,
+  deleteFavorite,
 } = userQuery.endpoints;

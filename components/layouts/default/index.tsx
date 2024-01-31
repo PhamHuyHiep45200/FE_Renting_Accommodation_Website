@@ -18,14 +18,14 @@ export default function LayoutDefault({ children }: ILayoutDefault) {
   const { loading } = useAppSelector(
     (state: { commonSlice: ICommon }) => state.commonSlice
   );
-  const { checkChangeUser } = useAppSelector(
+  const { checkChangeUser, changeFavorite } = useAppSelector(
     (state: { authSlice: IAuthSlide }) => state.authSlice
   );
   const dispatch = useAppDispatch();
   const router = useRouter();
 
   const { data, isFetching, isSuccess, refetch } = useGetMeQuery({});
-  const { data: dataFavorite, isSuccess: successFavorite } = useUserFavoriteQuery({});
+  const { data: dataFavorite, isSuccess: successFavorite, refetch: refreshFavorite } = useUserFavoriteQuery({});
 
   const startLoadingStore = () => {
     dispatch(startLoading());
@@ -60,6 +60,12 @@ export default function LayoutDefault({ children }: ILayoutDefault) {
       refetch()
     }
   }, [checkChangeUser])
+
+  useEffect(()=>{
+    if(changeFavorite) {
+      refreshFavorite()
+    }
+  }, [changeFavorite])
 
   useEffect(() => {
     router.events.on("routeChangeStart", startLoadingStore);

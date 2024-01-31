@@ -14,7 +14,7 @@ function Header() {
   const { popupChat } = useAppSelector(
     (state: { commonSlice: ICommon }) => state.commonSlice
   );
-  const { favorite } = useAppSelector(
+  const { favorite, user } = useAppSelector(
     (state: { authSlice: IAuthSlide }) => state.authSlice
   );
   const router = useRouter();
@@ -33,24 +33,39 @@ function Header() {
             height={70}
             onClick={() => redirect("/")}
           />
-          <Button variant="contained" onClick={() => redirect("/post")}>
-            Đăng Bài
-          </Button>
+          {user && (
+            <Button variant="contained" onClick={() => redirect("/post")}>
+              Đăng Bài
+            </Button>
+          )}
         </div>
-        <div className="flex space-x-8 justify-between items-center">
-          <Badge
-            badgeContent={favorite}
-            color="error"
-            className="cursor-pointer"
-            onClick={() => redirect("/favorite")}
-          >
-            <FavoriteOutlinedIcon
-              className="text-[red] text-[35px]"
-            />
-          </Badge>
-          <Chat />
-          <Info />
-        </div>
+        {user ? (
+          <div className="flex space-x-8 justify-between items-center">
+            <Badge
+              badgeContent={favorite}
+              color="error"
+              className="cursor-pointer"
+              onClick={() => redirect("/favorite")}
+            >
+              <FavoriteOutlinedIcon className="text-[red] text-[35px]" />
+            </Badge>
+            <Chat />
+            <Info />
+          </div>
+        ) : (
+          <div className="flex items-center space-x-3">
+            <Button variant="contained" onClick={() => redirect("/login")}>
+              Đăng Nhập
+            </Button>
+            <Button
+              variant="contained"
+              color="success"
+              onClick={() => redirect("/register")}
+            >
+              Đăng Ký
+            </Button>
+          </div>
+        )}
       </Container>
     </div>
   );

@@ -15,7 +15,7 @@ export const authSlice = createSlice({
     setAuth: (state: IAuthSlide, action: PayloadAction<boolean>) => {
       state.auth = action.payload;
     },
-    setUser: (state: IAuthSlide, acction: PayloadAction<IUSer>) => {
+    setUser: (state: IAuthSlide, acction: PayloadAction<IUSer | null>) => {
       state.user = acction.payload;
     },
     setInfo: (state: IAuthSlide, action: PayloadAction<IInfoAccount>) => {
@@ -27,11 +27,14 @@ export const authSlice = createSlice({
     setCheckChangeUser: (state: IAuthSlide, action: PayloadAction<number>) => {
       state.checkChangeUser = action.payload;
     },
+    setChangeFavorite: (state: IAuthSlide, action: PayloadAction<number>) => {
+      state.changeFavorite = action.payload;
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setAuth, setUser, setInfo, setFavorite, setCheckChangeUser } =
+export const { setAuth, setUser, setInfo, setFavorite, setCheckChangeUser, setChangeFavorite } =
   authSlice.actions;
 
 export default authSlice.reducer;

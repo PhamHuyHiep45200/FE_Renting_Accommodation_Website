@@ -19,7 +19,11 @@ function Favorite() {
         ...pagination,
         total: dataFavorite.data.total,
       });
-      return dataFavorite.data.data;
+      return dataFavorite.data.data.map((e: any)=>({
+        ...e,
+        ...e.house,
+        user: e.user
+      }));
     }
     return [];
   }, [isFetching, successFavorite, dataFavorite]);
@@ -30,6 +34,7 @@ function Favorite() {
       page: page,
     });
   };
+  
   return (
     <Container>
       <h1>DANH SÁCH NHÀ TRỌ YÊU THÍCH</h1>
@@ -38,7 +43,7 @@ function Favorite() {
           {dataApi.map((product: any) => {
             return (
               <Grid item xs={3} key={product._id}>
-                <CardHome house={product} />
+                <CardHome house={product} favorite />
               </Grid>
             );
           })}

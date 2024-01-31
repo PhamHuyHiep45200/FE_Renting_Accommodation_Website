@@ -2,6 +2,7 @@ import InfoProduct from "@/components/detail/InfoProduct";
 import InfoUser from "@/components/detail/InfoUser";
 import {
   detailHouse,
+  favoriteById,
   getRunningQueriesThunk,
   useDetailHouseQuery,
 } from "@/store/service/user.service";
@@ -46,6 +47,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
     const id = context.query.id;
     if (typeof id === "string") {
       store.dispatch(detailHouse.initiate);
+      store.dispatch(favoriteById.initiate);
     }
     await Promise.all(store.dispatch(getRunningQueriesThunk()));
 

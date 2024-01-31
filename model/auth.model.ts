@@ -1,4 +1,5 @@
 export interface IUSer {
+  _id?: string
   username?: string | null;
   phone: string;
   role?: string;
@@ -22,4 +23,5 @@ export interface IAuthSlide {
   infoAccout: IInfoAccount | null;
   favorite: number,
   checkChangeUser?: number
+  changeFavorite?: number
 }

@@ -2,34 +2,86 @@ import { Avatar, Button, Card, CardContent, Tooltip } from "@mui/material";
 import PhoneInTalkOutlinedIcon from "@mui/icons-material/PhoneInTalkOutlined";
 import MarkUnreadChatAltOutlinedIcon from "@mui/icons-material/MarkUnreadChatAltOutlined";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
-import React, { useEffect } from "react";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import React, { useEffect, useState } from "react";
 import { copyText } from "@/utils/common.util";
-import { useAppDispatch } from "@/store/hooks";
-import { openChat, startLoading, stopLoading } from "@/store/slide/common.slide";
-import { useAddFavoriteMutation } from "@/store/service/user.service";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import {
+  openChat,
+  startLoading,
+  stopLoading,
+} from "@/store/slide/common.slide";
+import {
+  useAddFavoriteMutation,
+  useDeleteFavoriteMutation,
+  useFavoriteByIdQuery,
+} from "@/store/service/user.service";
 import { useSnackbar } from "notistack";
+import { IAuthSlide } from "@/model/auth.model";
+import { setChangeFavorite } from "@/store/slide/auth.slide";
 
-function InfoUser({detail}: any) {
+function InfoUser({ detail }: any) {
+  const { user } = useAppSelector(
+    (state: { authSlice: IAuthSlide }) => state.authSlice
+  );
   const dispatch = useAppDispatch();
   const { enqueueSnackbar } = useSnackbar();
-  // const [favorite, setFavorite] = useState<boolean>(detail?.like)
+  const [favorite, setFavorite] = useState<boolean>(true);
 
-  const [addFavorite, {isLoading, isSuccess, isError}] = useAddFavoriteMutation()
+  const {
+    data,
+    isSuccess: favoriteSuccess,
+    isError: favoriteError,
+    isFetching: favoriteFetching,
+    refetch,
+  } = useFavoriteByIdQuery({
+    house: detail._id,
+  });
+  const [addFavorite, { isLoading, isSuccess, isError }] =
+    useAddFavoriteMutation();
+  const [
+    deleteFavorite,
+    {
+      isLoading: loadingFavorite,
+      isSuccess: deleteFavoriteSuccess,
+      isError: deleteFavoriteError,
+    },
+  ] = useDeleteFavoriteMutation();
 
   const openChatModal = () => {
     dispatch(openChat());
   };
 
   const favoriteHouse = () => {
-    addFavorite({
-      house: detail._id
-    })
-  }
+    if (favorite) {
+      deleteFavorite({
+        id: detail._id, data: { active: false }
+      });
+    } else {
+      addFavorite({
+        house: detail._id,
+        user: user?._id,
+      });
+    }
+  };
+
+  useEffect(()=>{
+    if (favoriteSuccess) {
+      setFavorite(data.data)
+    }
+    if (favoriteError) {
+      enqueueSnackbar("Đã có lỗi xảy ra", {
+        variant: "error",
+      });
+    }
+  }, [favoriteSuccess, favoriteFetching, favoriteError])
 
   useEffect(() => {
     if (isSuccess) {
+      dispatch(setChangeFavorite(Math.random()));
+      refetch();
     }
-    if(isError) {
+    if (isError) {
       enqueueSnackbar("Đã có lỗi xảy ra", {
         variant: "error",
       });
@@ -37,18 +89,34 @@ function InfoUser({detail}: any) {
   }, [isSuccess, isError]);
 
   useEffect(() => {
-    if (isLoading) {
+    if (isLoading || loadingFavorite) {
       dispatch(startLoading());
     } else {
       dispatch(stopLoading());
     }
-  }, [isLoading]);
+  }, [isLoading, loadingFavorite]);
+
+  useEffect(() => {
+    if (deleteFavoriteSuccess) {
+      dispatch(setChangeFavorite(Math.random()));
+      refetch();
+    }
+    if (deleteFavoriteError) {
+      enqueueSnackbar("Đã có lỗi xảy ra", {
+        variant: "error",
+      });
+    }
+  }, [deleteFavoriteSuccess, deleteFavoriteError]);
 
   return (
     <Card>
       <CardContent className="flex flex-col items-center">
-        <Avatar src={detail?.user?.avatar} sx={{ width: 60, height: 60 }}>{detail?.user?.username?.[0]}</Avatar>
-        <span className="block mt-2 font-semibold">{detail?.user?.username}</span>
+        <Avatar src={detail?.user?.avatar} sx={{ width: 60, height: 60 }}>
+          {detail?.user?.username?.[0]}
+        </Avatar>
+        <span className="block mt-2 font-semibold">
+          {detail?.user?.username}
+        </span>
         <div className="my-2 font-semibold flex items-center space-x-2 text-primary">
           <PhoneInTalkOutlinedIcon />
           <Tooltip title="Sao Chép" arrow>
@@ -72,9 +140,14 @@ function InfoUser({detail}: any) {
           <MarkUnreadChatAltOutlinedIcon />
           <span className="ml-2">Nhắn Tin</span>
         </Button>
-        <Button fullWidth variant="contained" color="warning" onClick={favoriteHouse}>
-          <FavoriteBorderOutlinedIcon />
-          <span className="ml-2">Yêu Thích</span>
+        <Button
+          fullWidth
+          variant="contained"
+          color="warning"
+          onClick={favoriteHouse}
+        >
+          {favorite ? <FavoriteIcon /> : <FavoriteBorderOutlinedIcon />}
+          <span className="ml-2"> {favorite ? "Bỏ " : ""}Yêu Thích</span>
         </Button>
       </div>
     </Card>
