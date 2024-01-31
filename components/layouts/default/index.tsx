@@ -6,8 +6,10 @@ import Footer from "./Footer";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { startLoading, stopLoading } from "@/store/slide/common.slide";
-import { useGetMeQuery } from "@/store/service/user.service";
-import { setUser } from "@/store/slide/auth.slide";
+import { useGetMeQuery, useUserFavoriteQuery } from "@/store/service/user.service";
+import { setUser, setInfo, setFavorite } from "@/store/slide/auth.slide";
+import { Divider } from "@mui/material";
+import { IAuthSlide } from "@/model/auth.model";
 
 interface ILayoutDefault {
   children: JSX.Element;
@@ -16,10 +18,14 @@ export default function LayoutDefault({ children }: ILayoutDefault) {
   const { loading } = useAppSelector(
     (state: { commonSlice: ICommon }) => state.commonSlice
   );
+  const { checkChangeUser } = useAppSelector(
+    (state: { authSlice: IAuthSlide }) => state.authSlice
+  );
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  const { data, isFetching } = useGetMeQuery({});
+  const { data, isFetching, isSuccess, refetch } = useGetMeQuery({});
+  const { data: dataFavorite, isSuccess: successFavorite } = useUserFavoriteQuery({});
 
   const startLoadingStore = () => {
     dispatch(startLoading());
@@ -29,11 +35,31 @@ export default function LayoutDefault({ children }: ILayoutDefault) {
     dispatch(stopLoading());
   };
 
-  useEffect(() => {    
-    if (!isFetching) {
-      dispatch(setUser(data.data))
+  useEffect(() => {
+    if (isSuccess) {
+      dispatch(setUser(data.data.user));
+      dispatch(
+        setInfo({
+          maxMoney: data.data.maxMoney,
+          maxSquare: data.data.maxSquare,
+          minMoney: data.data.minMoney,
+          minSquare: data.data.minSquare,
+        })
+      );
     }
-  }, [isFetching]);
+  }, [isFetching, isSuccess]);
+
+  useEffect(() => {
+    if(successFavorite) {
+      dispatch(setFavorite(dataFavorite.data.data.length))
+    }
+  }, [dataFavorite, successFavorite]);
+
+  useEffect(()=>{
+    if(checkChangeUser) {
+      refetch()
+    }
+  }, [checkChangeUser])
 
   useEffect(() => {
     router.events.on("routeChangeStart", startLoadingStore);
@@ -52,10 +78,11 @@ export default function LayoutDefault({ children }: ILayoutDefault) {
       <header className="bg-white">
         <Header />
       </header>
-      <main className="mt-20 bg-white min-h-[100vh] pb-10 pt-10">
+      <main className="mt-20 bg-[whitesmoke] min-h-[100vh] pb-10 pt-10">
         {loading && <MaskLoading />}
         {children}
       </main>
+      <Divider />
       <Footer />
     </>
   );

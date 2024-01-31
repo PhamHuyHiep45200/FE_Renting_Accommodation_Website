@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { FormikProps } from "formik";
 
 export interface IMaskImage {
@@ -40,4 +41,18 @@ export interface IBaseDescription {
   value: string;
   placeholder: string;
   onChange?: (value: string) => void;
+}
+
+export interface IUploadSignImageProps {
+  onChange?: (value: string) => void;
+  value?: string;
+}
+
+export interface IHeaderprops {
+  icon: JSX.Element,
+  title: string,
+  color?: string
+  fontSize?: number
+  center?: boolean
+  textColor?: string
 }

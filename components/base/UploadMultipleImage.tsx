@@ -10,7 +10,8 @@ function UploadMultipleImage(props: IMutilImageUpload) {
   const { value, onChange } = props;
   const [images, setImages] = useState<string[]>([]);
 
-  const [uploadImage, { data, isLoading }] = useUploadImageMutation();
+  const [uploadImage, { data, isLoading, isSuccess, isError }] =
+    useUploadImageMutation();
 
   const selectFile = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -34,14 +35,11 @@ function UploadMultipleImage(props: IMutilImageUpload) {
   }, [value]);
 
   useEffect(() => {
-    if (!isLoading) {
-      if (data) {
-        setImages([...images, data.data.url]);
-        onChange?.([...images, data.data.url]);
-      } else {
-      }
+    if (isSuccess) {
+      setImages([...images, data.data.url]);
+      onChange?.([...images, data.data.url]);
     }
-  }, [isLoading]);
+  }, [isSuccess, isError]);
 
   return (
     <div>
@@ -63,7 +61,13 @@ function UploadMultipleImage(props: IMutilImageUpload) {
       <Button
         component="label"
         variant="contained"
-        startIcon={!isLoading ? <CloudUploadIcon /> : <CircularProgress size={20} color='inherit' />}
+        startIcon={
+          !isLoading ? (
+            <CloudUploadIcon />
+          ) : (
+            <CircularProgress size={20} color="inherit" />
+          )
+        }
         className="relative"
       >
         <input

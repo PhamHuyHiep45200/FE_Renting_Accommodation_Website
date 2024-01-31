@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import MaskImage from "../base/MaskImage";
 import {
+  Divider,
   Paper,
   Table,
   TableBody,
@@ -13,7 +14,9 @@ import {
 } from "@mui/material";
 import styled from "@emotion/styled";
 import Image from "next/image";
-import { formatMoney } from "@/utils/common.util";
+import { formatMoney, getDistrict, getProvince } from "@/utils/common.util";
+import moment from "moment";
+import { Swiper as SwiperType } from "swiper/types";
 
 const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
@@ -34,7 +37,54 @@ const StyledTableRow = styled(TableRow)(() => ({
     border: 0,
   },
 }));
-function InfoProduct() {
+
+function InfoProduct({ detail }: any) {
+  const [slideIndex, setSlideIndex] = useState<number>(0);
+
+  const changeSlide = (e: SwiperType) => {
+    if (!Number.isNaN(e.realIndex)) {
+      setSlideIndex(e.realIndex);
+    }
+  };
+  const locationTableCell = useMemo(() => {
+    return [
+      {
+        id: 1,
+        label: "Tỉnh",
+        value: getProvince(detail?.province ?? 1),
+      },
+      {
+        id: 2,
+        label: "Huyện",
+        value: getDistrict(detail?.province ?? 1, detail?.district ?? 1),
+      },
+      {
+        id: 3,
+        label: "Địa Chỉ",
+        value: detail?.address,
+      },
+    ];
+  }, [detail]);
+
+  const infoOther = useMemo(() => {
+    return [
+      {
+        id: 1,
+        label: "Thể Loại",
+        value: detail?.category?.name,
+      },
+      {
+        id: 2,
+        label: "Thông Tin",
+        value: detail?.contact,
+      },
+      {
+        id: 3,
+        label: "Ngày Chỉnh Sửa Cuối",
+        value: moment(detail?.updatedAt).fromNow(),
+      },
+    ];
+  }, [detail]);
   return (
     <div>
       <Swiper
@@ -44,45 +94,52 @@ function InfoProduct() {
         speed={600}
         navigation={true}
         modules={[Autoplay, Pagination, Navigation]}
-        className="mySwiper"
+        className="mySwiper relative"
+        onSlideChange={changeSlide}
       >
-        {[1, 2, 3, 4, 5, 6, 7].map((e) => {
+        {detail?.imgs?.map((img: string) => {
           return (
-            <SwiperSlide key={e} className="cursor-pointer">
+            <SwiperSlide key={img} className="cursor-pointer">
               <div>
-                <MaskImage
-                  src="https://vdoc.edu.vn/wp-content/uploads/2022/08/Thien-nhien.jpg"
-                  height={400}
-                />
+                <MaskImage src={img} height={400} />
               </div>
             </SwiperSlide>
           );
         })}
+        <div className="text-white font-bold w-[45px] h-[45px] rounded-full absolute right-5 bottom-5 z-10 bg-[rgba(0,0,0,0.3)] flex justify-center items-center">
+          {slideIndex + 1} / {detail?.imgs?.length}
+        </div>
       </Swiper>
-      <h1 className="text-[#333]">
-        Phòng Master Tolet riêng Căn hộ Chung cư Era Town Đức Khải, Phường Phú
-        Mỹ, Quận 7
-      </h1>
-      <span>chuyên mục: Thuê Trọ</span>
+      <h1 className="text-[#333]">{detail?.title}</h1>
+      <span className="text-[18px]">
+        Chuyên Mục:{" "}
+        <span className="font-semibold">
+          {detail?.type === "RENT" ? "Thuê Trọ" : "Tìm Người Ở Ghép"}
+        </span>
+      </span>
 
-      <div className="flex items-center my-2 space-x-1">
+      <div className="flex items-center my-2 mt-4space-x-1">
         <Image src="/image/money.png" alt="" width={40} height={40} />
-        <span className="font-semibold text-[25px] text-[red]">{formatMoney(2000000)} đ</span>
+        <span className="font-semibold text-[25px] text-[red]">
+          {formatMoney(detail?.money ?? 0)} đ
+        </span>
       </div>
 
+      <Divider />
+
       <h3>Thông Tin Mô Tả</h3>
-      <p></p>
+      <div dangerouslySetInnerHTML={{ __html: detail?.description }} />
 
       <h3>Địa Điểm Thuê</h3>
       <TableContainer component={Paper}>
         <Table aria-label="customized table">
           <TableBody>
-            {[1, 2, 3].map((row) => (
-              <StyledTableRow key={row}>
-                <StyledTableCell width={"35%"} component="th" scope="row">
-                  {row}
+            {locationTableCell.map((row) => (
+              <StyledTableRow key={row.id}>
+                <StyledTableCell width={"30%"} component="th" scope="row">
+                  {row.label}
                 </StyledTableCell>
-                <StyledTableCell>{row}</StyledTableCell>
+                <StyledTableCell>{row.value}</StyledTableCell>
               </StyledTableRow>
             ))}
           </TableBody>
@@ -93,12 +150,12 @@ function InfoProduct() {
       <TableContainer component={Paper}>
         <Table aria-label="customized table">
           <TableBody>
-            {[1, 2, 3].map((row) => (
-              <StyledTableRow key={row}>
-                <StyledTableCell width={"35%"} component="th" scope="row">
-                  {row}
+            {infoOther.map((row) => (
+              <StyledTableRow key={row.id}>
+                <StyledTableCell width={"30%"} component="th" scope="row">
+                  {row.label}
                 </StyledTableCell>
-                <StyledTableCell>{row}</StyledTableCell>
+                <StyledTableCell>{row.value}</StyledTableCell>
               </StyledTableRow>
             ))}
           </TableBody>

@@ -1,4 +1,4 @@
-import { Avatar, Badge, Button, Container } from "@mui/material";
+import { Badge, Button, Container } from "@mui/material";
 import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
 import Image from "next/image";
 import React from "react";
@@ -7,13 +7,14 @@ import { useRouter } from "next/router";
 import PopUpChat from "./header/PopUpChat";
 import { useAppSelector } from "@/store/hooks";
 import { ICommon } from "@/model/common.model";
+import Info from "./header/Info";
 import { IAuthSlide } from "@/model/auth.model";
 
 function Header() {
   const { popupChat } = useAppSelector(
     (state: { commonSlice: ICommon }) => state.commonSlice
   );
-  const { user } = useAppSelector(
+  const { favorite } = useAppSelector(
     (state: { authSlice: IAuthSlide }) => state.authSlice
   );
   const router = useRouter();
@@ -38,21 +39,17 @@ function Header() {
         </div>
         <div className="flex space-x-8 justify-between items-center">
           <Badge
-            badgeContent={1}
+            badgeContent={favorite}
             color="error"
             className="cursor-pointer"
+            onClick={() => redirect("/favorite")}
           >
-            <FavoriteOutlinedIcon className="text-[red] text-[35px]" />
+            <FavoriteOutlinedIcon
+              className="text-[red] text-[35px]"
+            />
           </Badge>
           <Chat />
-          <div className="flex items-center space-x-2">
-            <Avatar
-              sx={{ height: 30, width: 30 }}
-              alt={user?.username?.[0]}
-              src="/static/images/avatar/1.jpg"
-            />
-            <span>{user?.username}</span>
-          </div>
+          <Info />
         </div>
       </Container>
     </div>

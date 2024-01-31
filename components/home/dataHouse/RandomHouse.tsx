@@ -1,14 +1,30 @@
 import CardHome from "@/components/base/CardHome";
+import HeaderProduct from "@/components/base/HeaderProduct";
+import { useRandomHouseQuery } from "@/store/service/user.service";
 import { Grid } from "@mui/material";
-import React from "react";
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import React, { useMemo } from "react";
 
 function RandomHouse() {
+  const { data, isSuccess } = useRandomHouseQuery({
+    type: "RENT",
+  });
+
+  const randomHouse = useMemo(() => {
+    if (isSuccess) {
+      return data.data;
+    }
+    return [];
+  }, [isSuccess]);
   return (
     <Grid container spacing={2}>
-      {[1, 2, 3, 4, , 5, 6].map((product) => {
+      <Grid item xs={12}>
+      <HeaderProduct icon={<AccountBalanceIcon color='warning' sx={{width: 40,height: 40}} />} title="Cho Thuê Trọ" />
+      </Grid>
+      {randomHouse.map((product: any) => {
         return (
-          <Grid item xs={6} key={product}>
-            <CardHome />
+          <Grid item xs={6} key={product._id}>
+            <CardHome house={product} />
           </Grid>
         );
       })}
