@@ -46,8 +46,8 @@ export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async (context: GetServerSidePropsContext) => {
     const id = context.query.id;
     if (typeof id === "string") {
-      store.dispatch(detailHouse.initiate);
-      store.dispatch(favoriteById.initiate);
+      store.dispatch(detailHouse.initiate(id));
+      store.dispatch(favoriteById.initiate(id));
     }
     await Promise.all(store.dispatch(getRunningQueriesThunk()));
 

@@ -3,9 +3,10 @@ import CardHome from "@/components/base/CardHome";
 import { useRandomHouseQuery } from "@/store/service/user.service";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow, Pagination } from "swiper/modules";
+import SlideHome from "@/components/loading/home/Slide";
 
 function RandomPair() {
-  const { data, isSuccess } = useRandomHouseQuery({
+  const { data, isSuccess, isFetching } = useRandomHouseQuery({
     type: "PAIR",
   });
   const randomHouse = useMemo(() => {
@@ -33,13 +34,17 @@ function RandomPair() {
         modules={[EffectCoverflow, Pagination]}
         className="mySwiper"
       >
-        {randomHouse.map((e: any) => {
-          return (
-            <SwiperSlide key={e._id} className="cursor-pointer">
-              <CardHome house={e} />
-            </SwiperSlide>
-          );
-        })}
+        {isFetching ? (
+          <SlideHome listNum={3} span={4} />
+        ) : (
+          randomHouse.map((e: any) => {
+            return (
+              <SwiperSlide key={e._id} className="cursor-pointer">
+                <CardHome house={e} />
+              </SwiperSlide>
+            );
+          })
+        )}
       </Swiper>
     </div>
   );

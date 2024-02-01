@@ -29,7 +29,7 @@ function CardHome(props: any) {
       />
       <MaskImage height={200} src={house?.imgs?.[0]} />
       <div className="p-5 pt-2">
-        <span className="block font-semibold truncate-2">{house?.title}</span>
+        <span className="block font-semibold truncate-2 h-[40px]">{house?.title}</span>
         <div className="flex items-center my-2 space-x-1">
           <Image src="/image/money.png" alt="" width={30} height={30} />
           <span className="font-semibold">

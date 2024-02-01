@@ -18,6 +18,7 @@ export const userQuery = createApi({
       return action.payload[reducerPath];
     }
   },
+  refetchOnReconnect: true,
   tagTypes: [],
   endpoints(build) {
     return {

@@ -13,7 +13,7 @@ import {
 import { wrapper } from "@/store/store";
 import { Container, Divider } from "@mui/material";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
-import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import React from "react";
 import HeaderProduct from "@/components/base/HeaderProduct";
 
@@ -21,7 +21,12 @@ function Index() {
   return (
     <div className="">
       <HeaderProduct
-        icon={<FavoriteIcon color="primary" sx={{ width: 40, height: 40, color: "white" }} />}
+        icon={
+          <FavoriteIcon
+            color="primary"
+            sx={{ width: 40, height: 40, color: "white" }}
+          />
+        }
         center
         color="#d20000"
         textColor="white"
