@@ -75,11 +75,16 @@ function InfoProduct({ detail }: any) {
       },
       {
         id: 2,
+        label: "Diện Tích",
+        value: detail?.square + ' m2',
+      },
+      {
+        id: 3,
         label: "Thông Tin",
         value: detail?.contact,
       },
       {
-        id: 3,
+        id: 4,
         label: "Ngày Chỉnh Sửa Cuối",
         value: moment(detail?.updatedAt).fromNow(),
       },

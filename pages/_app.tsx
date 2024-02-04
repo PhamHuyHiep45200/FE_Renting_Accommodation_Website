@@ -17,6 +17,9 @@ import "swiper/css";
 import "swiper/css/pagination";
 import { NextPage } from "next";
 import ProviderMessage from "@/components/base/ProviderMessage";
+import { Inter } from 'next/font/google'
+
+const inter = Inter({ subsets: ['latin'] })
 
 type Page<P = {}> = NextPage<P> & {
   // eslint-disable-next-line no-unused-vars
@@ -39,9 +42,11 @@ export default function App({ Component, pageProps }: Props) {
     ((page: JSX.Element) => <LayoutDefault>{page}</LayoutDefault>);
   return (
     <Provider store={storeRef.current}>
+      <div className={inter.className}>
       <ProviderMessage>
         {getLayout(<Component {...pageProps} />)}
       </ProviderMessage>
+      </div>
     </Provider>
   );
 }

@@ -19,6 +19,7 @@ function Favorite() {
         ...pagination,
         total: dataFavorite.data.total,
       });
+      
       return dataFavorite.data.data.map((e: any)=>({
         ...e,
         ...e.house,
@@ -26,7 +27,7 @@ function Favorite() {
       }));
     }
     return [];
-  }, [isFetching, successFavorite, dataFavorite]);
+  }, [successFavorite, dataFavorite]);
 
   const changePage = (_: ChangeEvent<unknown>, page: number) => {
     setPagination({

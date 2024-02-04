@@ -50,7 +50,7 @@ export const userQuery = createApi({
         query: () => ({ url: "/common/top-favourite", method: "get" }),
       }),
       favoriteById: build.query({
-        query: (params) => ({ url: `/common//check-like`, method: "get", params }),
+        query: (params) => ({ url: `/common/check-like`, method: "get", params }),
       }),
       randomUser: build.query({
         query: () => ({ url: "/common/random-user", method: "get" }),

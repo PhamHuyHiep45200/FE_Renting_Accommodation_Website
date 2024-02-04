@@ -1,4 +1,3 @@
-import DataHouse from "@/components/home/DataHouse";
 import Search from "@/components/home/Search";
 import Slide from "@/components/home/Slide";
 import RandomPair from "@/components/home/dataHouse/RandomPair";
@@ -14,13 +13,14 @@ import { wrapper } from "@/store/store";
 import { Container, Divider } from "@mui/material";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import React from "react";
-import HeaderProduct from "@/components/base/HeaderProduct";
+import React, { lazy } from "react";
+const DataHouseLazy = lazy(()=>import("@/components/home/DataHouse"))
+const HeaderProductLazy = lazy(()=> import("@/components/base/HeaderProduct"))
 
 function Index() {
   return (
     <div className="">
-      <HeaderProduct
+      <HeaderProductLazy
         icon={
           <FavoriteIcon
             color="primary"
@@ -37,7 +37,7 @@ function Index() {
         <Search />
       </Container>
       <Divider className="mt-10" />
-      <HeaderProduct
+      <HeaderProductLazy
         icon={<GroupAddIcon sx={{ width: 40, height: 40, color: "white" }} />}
         center
         color="#1976d2"
@@ -48,7 +48,7 @@ function Index() {
       <Divider />
       <Container>
         <div className="mt-[60px]">
-          <DataHouse />
+          <DataHouseLazy />
         </div>
       </Container>
     </div>

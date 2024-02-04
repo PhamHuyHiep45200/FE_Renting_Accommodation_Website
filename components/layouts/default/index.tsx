@@ -6,8 +6,16 @@ import Footer from "./Footer";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { startLoading, stopLoading } from "@/store/slide/common.slide";
-import { useGetMeQuery, useUserFavoriteQuery } from "@/store/service/user.service";
-import { setUser, setInfo, setFavorite } from "@/store/slide/auth.slide";
+import {
+  useGetMeQuery,
+  useUserFavoriteQuery,
+} from "@/store/service/user.service";
+import {
+  setUser,
+  setInfo,
+  setFavorite,
+  setAuth,
+} from "@/store/slide/auth.slide";
 import { Divider } from "@mui/material";
 import { IAuthSlide } from "@/model/auth.model";
 
@@ -18,14 +26,28 @@ export default function LayoutDefault({ children }: ILayoutDefault) {
   const { loading } = useAppSelector(
     (state: { commonSlice: ICommon }) => state.commonSlice
   );
-  const { checkChangeUser, changeFavorite } = useAppSelector(
+  const { checkChangeUser, changeFavorite, user, auth } = useAppSelector(
     (state: { authSlice: IAuthSlide }) => state.authSlice
   );
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  const { data, isFetching, isSuccess, refetch } = useGetMeQuery({});
-  const { data: dataFavorite, isSuccess: successFavorite, refetch: refreshFavorite } = useUserFavoriteQuery({});
+  const { data, isFetching, isSuccess, refetch } = useGetMeQuery(
+    {},
+    {
+      skip: !auth,
+    }
+  );
+  const {
+    data: dataFavorite,
+    isSuccess: successFavorite,
+    refetch: refreshFavorite,
+  } = useUserFavoriteQuery(
+    {},
+    {
+      skip: !user,
+    }
+  );
 
   const startLoadingStore = () => {
     dispatch(startLoading());
@@ -50,22 +72,30 @@ export default function LayoutDefault({ children }: ILayoutDefault) {
   }, [isFetching, isSuccess]);
 
   useEffect(() => {
-    if(successFavorite) {
-      dispatch(setFavorite(dataFavorite.data.data.length))
+    if (successFavorite) {
+      dispatch(setFavorite(dataFavorite.data.data.length));
     }
   }, [dataFavorite, successFavorite]);
 
-  useEffect(()=>{
-    if(checkChangeUser) {
-      refetch()
+  useEffect(() => {
+    if (checkChangeUser) {
+      refetch();
     }
-  }, [checkChangeUser])
+  }, [checkChangeUser]);
 
-  useEffect(()=>{
-    if(changeFavorite) {
-      refreshFavorite()
+  useEffect(() => {
+    if (changeFavorite) {
+      refreshFavorite();
     }
-  }, [changeFavorite])
+  }, [changeFavorite]);
+
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      dispatch(setAuth(true));
+    } else {
+      dispatch(setAuth(false));
+    }
+  }, []);
 
   useEffect(() => {
     router.events.on("routeChangeStart", startLoadingStore);
