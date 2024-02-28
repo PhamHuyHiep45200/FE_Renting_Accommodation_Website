@@ -7,8 +7,10 @@ import { wrapper } from "@/store/store";
 import {
   getCategory,
   getRunningQueriesThunk,
+  useDetailHouseQuery,
   useGetCategoryQuery,
-  usePostHouseMutation,
+  useUpdateHouseMutation,
+  userQuery,
 } from "@/store/service/user.service";
 import { useSnackbar } from "notistack";
 import { useRouter } from "next/router";
@@ -28,14 +30,23 @@ const initialValues = {
   type: "",
   imgs: [] as string[],
 };
-function Post() {
+function Update() {
   const { enqueueSnackbar } = useSnackbar();
   const [categorys, setCategorys] = useState([]);
+  const [initialValue, setInitialValue] = useState(initialValues);
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const id = router.query.id;
 
-  const [postHouse, { isLoading, isSuccess, isError }] =
-    usePostHouseMutation();
+  const {
+    data: dataDetail,
+    isFetching: fetchingDetail,
+    isSuccess: successDetail,
+  } = useDetailHouseQuery(id, {
+    skip: !id,
+  });
+
+  const [updateHouse, { isLoading, isSuccess, isError }] = useUpdateHouseMutation();
   const {
     data,
     isFetching,
@@ -44,10 +55,11 @@ function Post() {
 
   useEffect(() => {
     if (isSuccess) {
-      enqueueSnackbar("Tạo Bài Viết Thành Công! Vui lòng đợi Admin phê duyệt", {
+      enqueueSnackbar("Cập Nhật Bài Viết Thành Công! Vui lòng đợi Admin phê duyệt", {
         variant: "success",
       });
       router.push("/me/house?tab=1");
+      dispatch(userQuery.util.resetApiState());
     }
     if (isError) {
       enqueueSnackbar("Đã có lỗi xảy ra", {
@@ -55,6 +67,15 @@ function Post() {
       });
     }
   }, [isSuccess, isError]);
+
+  useEffect(() => {
+    if (successDetail) {
+      setInitialValue({
+        ...dataDetail.data,
+        category: dataDetail.data.category._id,
+      });
+    }
+  }, [successDetail, fetchingDetail]);
 
   useEffect(() => {
     if (isLoading) {
@@ -77,22 +98,26 @@ function Post() {
   }, [isFetching]);
   return (
     <Container className="bg-white py-5 rounded-lg">
-      <h1>Đăng Tin Mới</h1>
+      <h1>Chỉnh Sửa Bài Đăng</h1>
       <Divider />
       <Formik
-        initialValues={initialValues}
+        initialValues={initialValue}
+        enableReinitialize
         validationSchema={validationSchema}
         onSubmit={(values) => {
-          postHouse(values);
+          updateHouse({
+            id,
+            data: values
+          });
         }}
       >
-        {(props) => <FormPost type="create" props={props} categorys={categorys} />}
+        {(props) => <FormPost props={props} categorys={categorys} type='update' />}
       </Formik>
     </Container>
   );
 }
 
-export default Post;
+export default Update;
 
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async () => {

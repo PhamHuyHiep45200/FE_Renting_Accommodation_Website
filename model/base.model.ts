@@ -25,8 +25,8 @@ export interface IFormMik extends FormikProps<{
   address: string;
   money: string;
   square: string;
-  province: number | undefined;
-  district: number | undefined;
+  province: number;
+  district: number;
   contact: string;
   type: string;
   imgs: string[];
@@ -35,6 +35,7 @@ export interface IFormMik extends FormikProps<{
 export interface IFormPost {
   props: IFormMik
   categorys: any
+  type: 'update' | 'create'
 }
 
 export interface IBaseDescription {

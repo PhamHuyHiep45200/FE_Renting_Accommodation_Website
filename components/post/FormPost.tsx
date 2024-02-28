@@ -23,7 +23,7 @@ import { Field } from "formik";
 import Desctiption from "../base/Description";
 
 function FormPost(propsPost: IFormPost) {
-  const { props, categorys } = propsPost;
+  const { props, categorys, type } = propsPost;
 
   const district = useMemo(() => {
     if (props.values.province) {
@@ -39,6 +39,7 @@ function FormPost(propsPost: IFormPost) {
       }
     }
   }, [props.values.province]);
+
   return (
     <form onSubmit={props.handleSubmit}>
       <h3>Loại Tin</h3>
@@ -177,7 +178,8 @@ function FormPost(propsPost: IFormPost) {
           </FormHelperText>
         </FormControl>
         <FormControl fullWidth>
-          <Textarea
+          <Field
+            as={Textarea}
             minRows={6}
             placeholder="Thông Tin Liên Hệ ..."
             variant="soft"
@@ -192,7 +194,8 @@ function FormPost(propsPost: IFormPost) {
         </FormControl>
         <div className="flex items-center space-x-10">
           <FormControl>
-            <TextField
+            <Field
+              as={TextField}
               type="number"
               label="Diện Tích"
               name="square"
@@ -211,7 +214,8 @@ function FormPost(propsPost: IFormPost) {
             </FormHelperText>
           </FormControl>
           <FormControl>
-            <TextField
+            <Field
+              as={TextField}
               label="Số Tiền"
               type="number"
               name="money"
@@ -245,7 +249,7 @@ function FormPost(propsPost: IFormPost) {
       </div>
       <div className="text-center">
         <Button variant="contained" size="large" color="primary" type="submit">
-          Đăng Bài
+          {type === 'update' ? 'Cập Nhật' : 'Đăng Bài'}
         </Button>
       </div>
     </form>

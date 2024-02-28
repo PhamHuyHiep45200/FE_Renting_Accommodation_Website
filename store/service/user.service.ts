@@ -101,6 +101,12 @@ export const userQuery = createApi({
           data,
         }),
       }),
+      deleteHouse: build.mutation({
+        query: ({id}) => ({
+          url: `/house/${id}`,
+          method: "delete",
+        }),
+      }),
       updateMe: build.mutation({
         query: (data) => ({
           url: `/users/me`,
@@ -143,6 +149,7 @@ export const {
   usePostHouseMutation,
   useUploadImageMutation,
   useUpdateHouseMutation,
+  useDeleteHouseMutation,
   useUpdateMeMutation,
   useRegisterUserMutation,
   useAddFavoriteMutation,
@@ -162,6 +169,7 @@ export const {
   detailHouse,
   houseUser,
   updateHouse,
+  deleteHouse,
   updateMe,
   newHouse,
   search,

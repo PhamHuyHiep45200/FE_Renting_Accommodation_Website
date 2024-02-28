@@ -1,6 +1,8 @@
+/* eslint-disable max-lines */
 /* eslint-disable no-mixed-operators */
 import MaskImage from "@/components/base/MaskImage";
 import {
+  useDeleteHouseMutation,
   useHouseUserQuery,
   useUpdateHouseMutation,
 } from "@/store/service/user.service";
@@ -25,16 +27,22 @@ import RunningWithErrorsIcon from "@mui/icons-material/RunningWithErrors";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
+import BrushIcon from "@mui/icons-material/Brush";
+import DeleteSweepIcon from "@mui/icons-material/DeleteSweep";
 import { HOUSE_STATUS } from "@/config/house.config";
+import DialogConfirm from "@/components/base/DialogConfirm";
 
 function House() {
   const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
+  const { tab: tabStatus } = router.query;
   const [pagination, setPagination] = useState({
     total: 0,
     page: 1,
   });
   const [tab, setTab] = useState(0);
+  const [open, setOpen] = useState(false);
+  const [idAction, setIdAction] = useState('');
 
   const { data, isSuccess, refetch } = useHouseUserQuery({
     page: pagination.page,
@@ -42,6 +50,9 @@ function House() {
   });
   const [updateHouse, { isSuccess: isSuccessUpdate, isError: isErrorUpdate }] =
     useUpdateHouseMutation();
+  
+    const [deleteHouse, { isSuccess: isSuccessDelete, isError: isErrorDelete }] =
+    useDeleteHouseMutation();
 
   const listHouse = useMemo(() => {
     if (isSuccess) {
@@ -64,6 +75,17 @@ function House() {
       });
     }
   }, [isSuccessUpdate, isErrorUpdate]);
+
+  useEffect(() => {
+    if (isSuccessDelete) {
+      refetch();
+    }
+    if (isErrorDelete) {
+      enqueueSnackbar("Xoá Thất Bại", {
+        variant: "error",
+      });
+    }
+  }, [isSuccessDelete, isErrorDelete]);
 
   const changeActive = (
     e: React.MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
@@ -96,6 +118,20 @@ function House() {
       },
     });
   };
+
+  const submitDialog = () => {
+    if (tabStatus === "1") {
+      router.push(`/update/${idAction}`)
+      return
+    }
+    deleteHouse({id: idAction})
+    setOpen(false)
+  };
+
+  const openDialogAction = (id: string) => {
+    setOpen(true)
+    setIdAction(id)
+  }
 
   useEffect(() => {
     if (router.query.tab) {
@@ -140,6 +176,8 @@ function House() {
             <TableCell>Địa Chỉ</TableCell>
             <TableCell>Số Tiền</TableCell>
             <TableCell>Hoạt Động</TableCell>
+            {(tabStatus === "0") && <TableCell>Xoá Bài</TableCell>}
+            {tabStatus === "1" && <TableCell>Sửa Bài</TableCell>}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -183,10 +221,35 @@ function House() {
                   onClick={(e) => changeActive(e, row?._id)}
                 />
               </TableCell>
+              {tabStatus === "1" && (
+                <TableCell>
+                  <BrushIcon
+                    className="text-[#ff9500] text-[30px]"
+                    onClick={() => openDialogAction(row?._id)}
+                  />
+                </TableCell>
+              )}
+              {(tabStatus === "0" || tabStatus === undefined) && (
+                <TableCell>
+                  <DeleteSweepIcon className="text-[red] text-[30px]" onClick={() => openDialogAction(row?._id)}/>
+                </TableCell>
+              )}
             </TableRow>
           ))}
         </TableBody>
       </Table>
+      <DialogConfirm
+        openDialog={open}
+        title={tabStatus === "1" ? "Chỉnh Sửa Bài" : "Xoá Bài"}
+        textContent={
+          tabStatus === "1"
+            ? "Bạn Muốn Chỉnh Sửa Bài?"
+            : "Bạn Chắc Chắn Muốn Xoá Bài?"
+        }
+        textSubmit={tabStatus === "1" ? "Chỉnh Sửa" : "Xoá Bài"}
+        onClose={() => setOpen(false)}
+        onSubmit={submitDialog}
+      />
       <Divider />
       {isSuccess && data.data.total > 0 && (
         <div className="flex justify-center mt-5">
