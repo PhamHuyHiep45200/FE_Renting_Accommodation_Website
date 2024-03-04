@@ -1,25 +1,12 @@
-import {
-  Button,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-} from "@mui/material";
-import Image from "next/image";
+import { Button, Input } from "@mui/material";
 import { useRouter } from "next/router";
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import SearchEnhanced from "./search/SearchEnhanced";
-import province from "@/data/province.json";
-import {
-  useGetCategoryQuery,
-} from "@/store/service/user.service";
 import { Field, Formik } from "formik";
 
 function Search() {
   const router = useRouter();
   const [open, setOpen] = useState<boolean>(false);
-
-  const { data, isSuccess } = useGetCategoryQuery({});
 
   const searchData = (values: any) => {
     const moneyQuery = values.money
@@ -52,14 +39,6 @@ function Search() {
     setOpen(true);
   };
 
-  const category = useMemo(() => {
-    if (isSuccess) {
-      return data.data.data;
-    }
-    return [];
-  }, [isSuccess]);
-
-
   return (
     <Formik
       initialValues={{}}
@@ -71,89 +50,30 @@ function Search() {
       {(props) => (
         <form onSubmit={props.handleSubmit}>
           <div
-            className="flex items-center justify-between px-4 py-5 rounded-xl"
+            className="flex items-center px-4 py-5 rounded-xl space-x-10"
             style={{
               boxShadow: "1px 10px 27px 5px rgba(0,0,0,0.2)",
               WebkitBoxShadow: "1px 10px 27px 5px rgba(0,0,0,0.2)",
               MozBoxShadow: "1px 10px 27px 5px rgba(0,0,0,0.2)",
             }}
           >
-            <div className="flex flex-1 justify-center">
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-standard-label">
-                  <div className="flex items-center space-x-2">
-                    <Image
-                      src="/image/home.png"
-                      width={22}
-                      height={22}
-                      alt=""
-                    />
-                    <span className="text-[16px] block mt-1">
-                      Tìm kiếm theo
-                    </span>
-                  </div>
-                </InputLabel>
-                <Field
-                  as={Select}
-                  id="demo-simple-select"
-                  variant="standard"
-                  labelId="demo-simple-select-standard-label"
-                  sx={{ width: 200 }}
-                  name="type"
-                >
-                  <MenuItem value="RENT">Thuê Nhà</MenuItem>
-                  <MenuItem value="PAIR">Tìm Người Ở Ghép</MenuItem>
-                </Field>
-              </FormControl>
-            </div>
-            <div className="flex flex-1 justify-center">
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-standard-label">
-                  Khu Vực
-                </InputLabel>
-                <Field
-                  as={Select}
-                  id="demo-simple-select"
-                  variant="standard"
-                  labelId="demo-simple-select-standard-label"
-                  name="province"
-                  sx={{ width: 200 }}
-                >
-                  {province.map((pro) => (
-                    <MenuItem key={pro.code} value={pro.code}>
-                      {pro.name}
-                    </MenuItem>
-                  ))}
-                </Field>
-              </FormControl>
-            </div>
-            <div className="flex flex-1 justify-center">
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-standard-label">
-                  Thể Loại
-                </InputLabel>
-                <Field
-                  as={Select}
-                  id="demo-simple-select"
-                  variant="standard"
-                  labelId="demo-simple-select-standard-label"
-                  name="category"
-                  sx={{ width: 200 }}
-                >
-                  {category.map((cate: any) => (
-                    <MenuItem key={cate._id} value={cate._id}>
-                      {cate.name}
-                    </MenuItem>
-                  ))}
-                </Field>
-              </FormControl>
-            </div>
-            <div className="flex flex-1 justify-center">
-              <Button variant="contained" color="warning" onClick={handleOpen}>
+            <Field
+              as={Input}
+              name="key_search"
+              placeholder="Nhập thông tin tìm kiếm ..."
+              className="flex-1"
+            />
+            <div className="flex justify-center">
+              <Button
+                variant="contained"
+                color="warning"
+                size="large"
+                onClick={handleOpen}
+              >
                 Lọc Nâng Cao
               </Button>
             </div>
-            <div className="flex flex-1 justify-center">
+            <div className="flex justify-center">
               <Button variant="contained" size="large" type="submit">
                 Tìm Kiếm
               </Button>
