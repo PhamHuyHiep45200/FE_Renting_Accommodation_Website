@@ -5,10 +5,11 @@ import React from "react";
 import Chat from "./header/Chat";
 import { useRouter } from "next/router";
 import PopUpChat from "./header/PopUpChat";
-import { useAppSelector } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { ICommon } from "@/model/common.model";
 import Info from "./header/Info";
 import { IAuthSlide } from "@/model/auth.model";
+import { userQuery } from "@/store/service/user.service";
 
 function Header() {
   const { popupChat } = useAppSelector(
@@ -17,6 +18,7 @@ function Header() {
   const { favorite, user } = useAppSelector(
     (state: { authSlice: IAuthSlide }) => state.authSlice
   );
+  const dispatch = useAppDispatch()
   const router = useRouter();
   const redirect = (path: string) => {
     router.push(path);
@@ -45,7 +47,10 @@ function Header() {
               badgeContent={favorite}
               color="error"
               className="cursor-pointer"
-              onClick={() => redirect("/favorite")}
+              onClick={() => {
+                dispatch(userQuery.util.resetApiState());
+                redirect("/favorite")
+              }}
             >
               <FavoriteOutlinedIcon className="text-[red] text-[35px]" />
             </Badge>
