@@ -14,8 +14,12 @@ import "swiper/css/pagination";
 import { NextPage } from "next";
 import ProviderMessage from "@/components/base/ProviderMessage";
 import { Inter } from 'next/font/google'
+import 'moment/locale/vi';
+import moment from "moment";
 
 const inter = Inter({ subsets: ['latin'] })
+
+moment().locale('he')
 
 type Page<P = {}> = NextPage<P> & {
   // eslint-disable-next-line no-unused-vars

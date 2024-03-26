@@ -25,7 +25,7 @@ function CardHome(props: any) {
           </Avatar>
         }
         title={<span className="font-semibold">{house?.user?.username}</span>}
-        subheader={<span>{moment(house?.createdAt).fromNow()}</span>}
+        subheader={<span>{moment(house?.updatedAt).fromNow()}</span>}
       />
       <MaskImage height={200} src={house?.imgs?.[0]} />
       <div className="p-5 pt-2">
